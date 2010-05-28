@@ -1,0 +1,26 @@
+Algoritmo para proyecto de algoritmos :
+
+ Para cada nodo v hacer
+   Comienzo
+    calcularPrerequisitos(v)
+   Fin
+---------------------------------------------
+calcularPrerequisitos(nodo v)
+
+Para cada nodo j diferente de v hacer 
+Comienzo 
+    si (v,j) es arco 
+	agregar j a posobles candidatos 
+Fin 
+
+Para cada j en posibles candidatos hacer
+Comienzo
+    Para cada v diferente de j en posibles candidatos hacer
+      Comienzo
+	Si (j,v) es arco marcar v como prerequisito no inmediato 
+      Fin 
+Fin 
+
+Devolver los NO marcados 
+
+
