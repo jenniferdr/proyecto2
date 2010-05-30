@@ -46,7 +46,7 @@ public class Lista <E> implements List <E>,Cloneable {
      *	      Debe ser mayor a 0. Si es mayor a this.size() se agrega al final de la lista.
      * @param element Elemento a agregar. Debe ser no nulo
      * @return True si fue agregado, false si es null
-     */{
+     */
     public boolean add(int index, E element) {
 	if (element==null || index<0) {
 	    return false;
