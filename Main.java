@@ -93,7 +93,30 @@ public class Main {
 	imprimirGrafo o Lista()
 
 	}
+
+	public int busqueda(String materia, String[] arreglo){
+	    return busquedaBi(0,arreglo.length, materia, arreglo);
+	}
+
+	public int busquedaBi(int ini, int fin,String s, String[] a){
+	    if (ini==fin){
+		return ini;
+	    }else{
+		int n= (fin+ini)/2
+		if(s.compareTo(a[n])<0){
+		    busquedaBi(ini,n,s,a);
+		}else{
+		    if(s.compareTo(a[n])>0){
+			busquedaBi(n+1,fin,s,a);
+		    }else{
+			return n;
+		    }
+		}
+	    }
+	}
 }
+
+
 
 
 
