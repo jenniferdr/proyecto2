@@ -26,11 +26,35 @@ public class Main {
 	}
 
 	BufferedReader in;
-	DiGraph grafo= null;
+	String[] nombresNodos = null;
+	DiGraph grafoInput = null;
+	int numNodos = 0;
 
 	try {
 	    grafo = new DiGraphMatrix(args[0]);
+	    String linea = in.readLine();
+	    numNodos = Integer.parseInt(linea);
+	    nombresNodos = new String[numNodos];
+	    for (int i=0; i<numNodos; i++) {
+		nombresNodos[i] = in.readLine();
+	    }
+	    ordenar(nombresNodos);
 
+	    grafoInput = new DiGraphMatrix(numNodos);
+	    linea = in.readLine();
+	    int numLineas = Integer.parseInt(linea);
+	    String[] partes;
+	    for (int i=0; i<numLineas; i++) {
+		linea = in.readLine();
+		partes = linea.split(" ");
+		int nodoDestino = busqueda(partes[0],nombresNodos);
+		int numArcos = Integer.parseInt(partes[1]);
+		for (int j=0; j<numArcos; j++) {
+		    int nodoOrigen = busqueda(partes[j+2],nombresNodos);
+		    Arc arco = grafoInput.addArc(nodoOrigen,nodoDestino);
+		}
+	    }
+		
 	} catch (FileNotFoundException fnfe) {
 	    System.err.println("Error al cargar archivo, verifique el nombre");
 	    return;
@@ -42,17 +66,33 @@ public class Main {
 	    return;
 	}
 
-
-	try {
-	    if(args.length ==2){
-	        grafo.write(args[1]);
-	    }else{
-	    	System.out.print(grafo);
+	DiGraph grafoAlcance = grafoInput.royWarshall();
+	DiGraph grafoReducido = grafoAlcance.clone();
+	Lista<Integer>[] predInmediatos = new Lista<Integer>[numNodos];
+	for (int i=0; i<numNodos; i++) {
+	    Lista<Integer> predecesores = grafoAlcance.getPredecesors(i);
+	    Lista<Integer> inmediatos = predecesores.clone();
+	    for (int j=0; j<predecesores.size(); j++) {
+		int nodoOrigen = predecesores.get(j).getValue();
+		boolean listo = false;
+		for (int k=0; k<predecesores.size() && !listo; k++) {
+		    int nodoDestino = predecesores.get(k).getValue();
+		    if (nodoDestino==nodoOrigen) {
+			continue;
+		    }
+		    if (grafoAlcance.isArc(nodoOrigen,nodoDestino)) {
+			Arc arco = grafoReducido.delArc(nodoOrigen,i);
+			Integer borrado = inmediatos.remove(nodoOrigen);
+			listo = true;
+		    }
+		}
 	    }
-	} catch (IOException ioe) {
-	    System.err.println("No se puede escribir el archivo");
+	    predInmediatos[i] = inmediatos;
 	}
-    }
+
+	imprimirGrafo o Lista()
+
+	}
 }
 
 
