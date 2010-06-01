@@ -29,7 +29,7 @@ public class Main {
 	DiGraph grafo= null;
 
 	try {
-		grafo = new DiGraphMatrix(args[0]);
+	    grafo = new DiGraphMatrix(args[0]);
 
 	} catch (FileNotFoundException fnfe) {
 	    System.err.println("Error al cargar archivo, verifique el nombre");
