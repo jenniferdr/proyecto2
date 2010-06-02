@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.lang.Integer;
 
 /**
  * Programa que dada la informacion contenida en un archivo
@@ -18,6 +19,28 @@ import java.io.PrintStream;
 **/
 
 public class Main {
+
+   private int busqueda(String materia, String[] arreglo){
+	return busquedaBi(0,arreglo.length, materia, arreglo);
+   }
+
+   private int busquedaBi(int ini, int fin,String s, String[] a){
+	if (ini==fin){
+	    return ini;
+	}else{
+	    int n= (fin+ini)/2;
+	    if(s.compareTo(a[n])<0){
+	    	busquedaBi(ini,n,s,a);
+	    }else{
+	    	if(s.compareTo(a[n])>0){
+		    busquedaBi(n+1,fin,s,a);
+	    	}else{
+		    return n;
+	        }
+	    }
+	}
+   }
+
     public static void main(String[] args){
 	
 	if (args.length != 2 && args.length !=1) {
@@ -31,7 +54,6 @@ public class Main {
 	int numNodos = 0;
 
 	try {
-	    grafo = new DiGraphMatrix(args[0]);
 	    String linea = in.readLine();
 	    numNodos = Integer.parseInt(linea);
 	    nombresNodos = new String[numNodos];
@@ -53,9 +75,9 @@ public class Main {
 		    int nodoOrigen = busqueda(partes[j+2],nombresNodos);
 		    Arc arco = grafoInput.addArc(nodoOrigen,nodoDestino);
 		}
-	    }
-		
-	} catch (FileNotFoundException fnfe) {
+	    } 
+	    
+	}catch (FileNotFoundException fnfe) {
 	    System.err.println("Error al cargar archivo, verifique el nombre");
 	    return;
 	} catch(IOException ioe) {
@@ -67,16 +89,16 @@ public class Main {
 	}
 
 	DiGraph grafoAlcance = grafoInput.royWarshall();
-	DiGraph grafoReducido = grafoAlcance.clone();
+	DiGraph grafoReducido = (DiGraph)grafoAlcance.clone();
 	Lista<Integer>[] predInmediatos = new Lista<Integer>[numNodos];
 	for (int i=0; i<numNodos; i++) {
-	    Lista<Integer> predecesores = grafoAlcance.getPredecesors(i);
-	    Lista<Integer> inmediatos = predecesores.clone();
+	    Lista<Integer> predecesores = (Lista<Integer>)grafoAlcance.getPredecesors(i);
+	    Lista<Integer> inmediatos = (Lista<Integer>)predecesores.clone();
 	    for (int j=0; j<predecesores.size(); j++) {
-		int nodoOrigen = predecesores.get(j).getValue();
+		int nodoOrigen = predecesores.get(j);
 		boolean listo = false;
 		for (int k=0; k<predecesores.size() && !listo; k++) {
-		    int nodoDestino = predecesores.get(k).getValue();
+		    int nodoDestino = predecesores.get(k);
 		    if (nodoDestino==nodoOrigen) {
 			continue;
 		    }
@@ -90,30 +112,11 @@ public class Main {
 	    predInmediatos[i] = inmediatos;
 	}
 
-	imprimirGrafo o Lista()
+	//imprimirGrafo o Lista()
 
 	}
 
-	public int busqueda(String materia, String[] arreglo){
-	    return busquedaBi(0,arreglo.length, materia, arreglo);
-	}
-
-	public int busquedaBi(int ini, int fin,String s, String[] a){
-	    if (ini==fin){
-		return ini;
-	    }else{
-		int n= (fin+ini)/2
-		if(s.compareTo(a[n])<0){
-		    busquedaBi(ini,n,s,a);
-		}else{
-		    if(s.compareTo(a[n])>0){
-			busquedaBi(n+1,fin,s,a);
-		    }else{
-			return n;
-		    }
-		}
-	    }
-	}
+	
 }
 
 
