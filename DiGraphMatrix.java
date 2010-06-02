@@ -20,7 +20,7 @@ public class DiGraphMatrix extends DiGraph {
 
     // estructura de la matriz de adyacencias que se debe utilizar
    private boolean matrix[][];
-   private String[] idNodo; 
+
    /**
     * Precondicion: n>0 
     * Crea un DiGraphMatrix con n nodos y sin arcos
@@ -30,10 +30,9 @@ public class DiGraphMatrix extends DiGraph {
 	matrix = new boolean[n][n];
         numArcs = 0;
 	numNodes = n;
-	idNodo= new String[n];
    }
 
-/** 
+   /** 
     * Precondicion: El número de nodos debe ser mayor a 0, y el número de arcos
     * reportados por el archivo deben coincidir con el número de arcos
     * en el archivo.
@@ -48,49 +47,31 @@ public class DiGraphMatrix extends DiGraph {
    public DiGraphMatrix(String fileName) throws FileNotFoundException, IOException, NumberFormatException{
 	BufferedReader in= new BufferedReader(new FileReader(fileName));
 	String linea= in.readLine();
-	
+	String[] tokens= linea.split(" ");
+
 	//Inicializar variables 
-	this.numNodes= Integer.parseInt(linea);
+	this.numNodes= Integer.parseInt(tokens[0]);
 	this.matrix = new boolean[numNodes][numNodes];
-	this.idNodo= new String[numNodes];
-
-	for (int i=0;i<this.numNodes && (linea = in.readLine())!=null;i++) {
-	    // Relaciona cada nodo i con su String
-	    idNodo[i]= linea;
-	} 
+	this.numArcs= Integer.parseInt(tokens[1]);
 	
-	// Numero de materias con prerequisitos
-	int n= Integer.parseInt(linea = in.readLine());
-	this.numArcs= 0;
 
-	for (int i=0;i<n && (linea = in.readLine())!=null;i++) {
-	    String[] tokens= linea.split(" ");
-	    int numArcos= Integer.parseInt(tokens[1]);
-
-	    this.numArcs= numArcs + numArcos;
-	    int nodoFin= this.indexNodo(tokens[0]);
-
-	    for(int x=0;x<numArcos; x++){
-		int nodoIni= this.indexNodo(tokens[x+2]);
-System.out.print(nodoIni +" " + nodoFin );
-		matrix[nodoIni][nodoFin]= true;
+	for (int i=0;i<this.numArcs && (linea = in.readLine())!=null;i++) {  
+	    tokens= linea.split(" ");
+	    int nodoOrigen= Integer.parseInt(tokens[0]);
+	    int nodoFin= Integer.parseInt(tokens[1]);
+	    if(nodoOrigen<numNodes && nodoOrigen>=0 
+				   && nodoFin<numNodes && nodoFin>=0){
+		if(matrix[nodoOrigen][nodoFin]){ 
+		    numArcs--;
+		}else{ 
+		    matrix[nodoOrigen][nodoFin]= true;
+		}
 	    }
+	    
 	}
 	
+	
    }
-
-   public int indexNodo(String nodo){
-	int index=0;
-
-	for(int i=0;i<numNodes; i++){
-System.out.print(idNodo[i]+ " "+ nodo);
-	    if(idNodo[i].equals(nodo)){
-		return i;
-	    }
-	}
-	return -1;
-   }
-
 
    /**
     * Precondicion: El grafo de entrada debe ser diferente de null.
@@ -116,7 +97,12 @@ System.out.print(idNodo[i]+ " "+ nodo);
    @Override
    public DiGraphMatrix clone() {
 	DiGraphMatrix g= new DiGraphMatrix(this.numNodes);
-	g.matrix = (boolean[][]) this.matrix.clone();
+	for (int i=0; i<numNodes; i++) {
+	    for (int j=0; j<numNodes; j++) {
+		g.matrix[i][j] = this.matrix[i][j] ;
+	    }
+	}
+	//g.matrix = (boolean[][]) this.matrix.clone();
 	g.numNodes = this.numNodes;
 	g.numArcs = this.numArcs;
 	return g;

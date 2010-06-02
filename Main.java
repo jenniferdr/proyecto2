@@ -20,26 +20,64 @@ import java.lang.Integer;
 
 public class Main {
 
-   private int busqueda(String materia, String[] arreglo){
+    /*private static int busqueda(String materia, String[] arreglo){
 	return busquedaBi(0,arreglo.length, materia, arreglo);
-   }
-
-   private int busquedaBi(int ini, int fin,String s, String[] a){
-	if (ini==fin){
+	}*/
+    
+    //Recursivo? Busqueda binaria se puede implementar iterativo
+    //Hacer recursión es ineficiente si hay un método iterativo
+    private static int busqueda(String s, String[] a){
+	/*if (ini==fin) {
 	    return ini;
-	}else{
-	    int n= (fin+ini)/2;
-	    if(s.compareTo(a[n])<0){
-	    	busquedaBi(ini,n,s,a);
-	    }else{
-	    	if(s.compareTo(a[n])>0){
+	} else {
+	    int n = (fin+ini)/2;
+	    if (s.compareTo(a[n])<0) {
+		busquedaBi(ini,n,s,a);
+	    } else {
+		if (s.compareTo(a[n])>0) {
 		    busquedaBi(n+1,fin,s,a);
-	    	}else{
+		} else {
 		    return n;
-	        }
+		}
+	    }
+	    }*/
+	int ini = 0;
+	int fin = a.length-1;
+	while (ini <= fin) {
+	    int medio = (ini+fin)/2;
+	    if (a[medio].equals(s)) {
+		return medio;
+	    } else if (a[medio].compareTo(s) < 0) {
+		ini = medio+1;
+	    } else {
+		fin = medio-1;
 	    }
 	}
-   }
+	return -1;
+    }
+
+    public static void ordenar (String[] arreglo) {
+	quicksort(arreglo, 0, arreglo.length);
+    }
+
+    public static void quicksort (String[] arreglo, int ini, int fin) {
+	if ( fin-ini <= 1 ) {
+	    return;
+	}
+	int limite = ini-1;
+	String pivote = arreglo[fin-1];
+        for (int j=ini; j<fin; j++) {
+	    if (arreglo[j].compareTo(pivote) <= 0) {
+		limite++;
+		String temp = arreglo[j];
+		arreglo[j] = arreglo[limite];
+		arreglo[limite] = temp;
+	    }
+	}
+        quicksort(arreglo, ini, limite);
+	quicksort(arreglo, limite+1, fin);
+	return;
+    }
 
     public static void main(String[] args){
 	
@@ -48,12 +86,13 @@ public class Main {
 	    return;
 	}
 
-	BufferedReader in;
+	BufferedReader in = null;
 	String[] nombresNodos = null;
 	DiGraph grafoInput = null;
 	int numNodos = 0;
 
 	try {
+	    in = new BufferedReader(new FileReader(args[0]));
 	    String linea = in.readLine();
 	    numNodos = Integer.parseInt(linea);
 	    nombresNodos = new String[numNodos];
@@ -90,31 +129,51 @@ public class Main {
 
 	DiGraph grafoAlcance = grafoInput.royWarshall();
 	DiGraph grafoReducido = (DiGraph)grafoAlcance.clone();
-	Lista<Integer>[] predInmediatos = new Lista<Integer>[numNodos];
+	//List<Integer> predInmediatos[] = new List[numNodos];
 	for (int i=0; i<numNodos; i++) {
-	    Lista<Integer> predecesores = (Lista<Integer>)grafoAlcance.getPredecesors(i);
-	    Lista<Integer> inmediatos = (Lista<Integer>)predecesores.clone();
+	    Arc borrado = grafoAlcance.delArc(i,i);
+	    borrado = grafoReducido.delArc(i,i);
+	    List<Integer> predecesores = grafoAlcance.getPredecesors(i);
+	    //List<Integer> inmediatos = predecesores.clone();
 	    for (int j=0; j<predecesores.size(); j++) {
-		int nodoOrigen = predecesores.get(j);
+		int nodoOrigen = predecesores.get(j).intValue();
 		boolean listo = false;
 		for (int k=0; k<predecesores.size() && !listo; k++) {
-		    int nodoDestino = predecesores.get(k);
-		    if (nodoDestino==nodoOrigen) {
+		    int nodoDestino = predecesores.get(k).intValue();
+		    if (nodoDestino==nodoOrigen || nodoDestino==i) {
 			continue;
 		    }
 		    if (grafoAlcance.isArc(nodoOrigen,nodoDestino)) {
 			Arc arco = grafoReducido.delArc(nodoOrigen,i);
-			Integer borrado = inmediatos.remove(nodoOrigen);
+			//Integer elem = inmediatos.remove(nodoOrigen);
 			listo = true;
 		    }
 		}
 	    }
-	    predInmediatos[i] = inmediatos;
+	    // predInmediatos[i] = inmediatos;
 	}
 
+	
 	//imprimirGrafo o Lista()
-
+	try {
+	    PrintStream out = new PrintStream(args[1]);
+	    for (int i=0; i<numNodos; i++) {
+		String salida = nombresNodos[i]+" ";
+		List<Integer> pred = grafoReducido.getPredecesors(i);
+		salida += pred.size();
+		for (int j=0; j<pred.size(); j++) {
+		    salida += " "+nombresNodos[pred.get(j).intValue()];
+		}
+		if (i!=numNodos-1) {
+		    salida += "\n";
+		}
+		out.print(salida);
+	    }
+	} catch (IOException ioe) {
+	    System.err.println("No se puede escribir el archivo");
 	}
+
+    }
 
 	
 }
