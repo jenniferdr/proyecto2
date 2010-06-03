@@ -164,10 +164,10 @@ public class Main {
 		for (int j=0; j<pred.size(); j++) {
 		    salida += " "+nombresNodos[pred.get(j).intValue()];
 		}
-		if (i!=numNodos-1) {
+		/*if (i!=numNodos-1) {
 		    salida += "\n";
-		}
-		out.print(salida);
+		}*/
+		out.print(salida+"\n");
 	    }
 	} catch (IOException ioe) {
 	    System.err.println("No se puede escribir el archivo");
