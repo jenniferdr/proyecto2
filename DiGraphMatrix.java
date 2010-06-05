@@ -97,12 +97,13 @@ public class DiGraphMatrix extends DiGraph {
    @Override
    public DiGraphMatrix clone() {
 	DiGraphMatrix g= new DiGraphMatrix(this.numNodes);
+
 	for (int i=0; i<numNodes; i++) {
 	    for (int j=0; j<numNodes; j++) {
 		g.matrix[i][j] = this.matrix[i][j] ;
 	    }
 	}
-	//g.matrix = (boolean[][]) this.matrix.clone();
+	
 	g.numNodes = this.numNodes;
 	g.numArcs = this.numArcs;
 	return g;

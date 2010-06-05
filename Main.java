@@ -7,11 +7,12 @@ import java.io.PrintStream;
 import java.lang.Integer;
 
 /**
- * Programa que dada la informacion contenida en un archivo
- * construye un grafo y le aplica el algoritmo Roy-Warshall.
- * Usa la implementacion DiGrafoMatrix si el numero de nodos
- * es mayor al numero de arcos, en caso contrario usa la 
- * implementacion DiGrafoList.
+ * Programa que recibe como entrada un archivo (.input) con
+ * un conjunto de nombres de cursos junto con sus
+ * prerequisitos.
+ * Computa el conjunto minimo de prerequisitos para cada
+ * curso y las escribe en el archivo de salida. 
+ * Sintaxis: java Main <archivo.input> <archivo.output>
  *
  * @author José A. Goncalves y Jennifer Dos Reis
  * @version 1.0
@@ -19,28 +20,8 @@ import java.lang.Integer;
 **/
 
 public class Main {
-
-    /*private static int busqueda(String materia, String[] arreglo){
-	return busquedaBi(0,arreglo.length, materia, arreglo);
-	}*/
     
-    //Recursivo? Busqueda binaria se puede implementar iterativo
-    //Hacer recursión es ineficiente si hay un método iterativo
     private static int busqueda(String s, String[] a){
-	/*if (ini==fin) {
-	    return ini;
-	} else {
-	    int n = (fin+ini)/2;
-	    if (s.compareTo(a[n])<0) {
-		busquedaBi(ini,n,s,a);
-	    } else {
-		if (s.compareTo(a[n])>0) {
-		    busquedaBi(n+1,fin,s,a);
-		} else {
-		    return n;
-		}
-	    }
-	    }*/
 	int ini = 0;
 	int fin = a.length-1;
 	while (ini <= fin) {
@@ -93,23 +74,30 @@ public class Main {
 
 	try {
 	    in = new BufferedReader(new FileReader(args[0]));
+
 	    String linea = in.readLine();
 	    numNodos = Integer.parseInt(linea);
 	    nombresNodos = new String[numNodos];
+
+	    // Leer nombres de los cursos 
 	    for (int i=0; i<numNodos; i++) {
 		nombresNodos[i] = in.readLine();
 	    }
 	    ordenar(nombresNodos);
 
+	    // Crear grafo y agregar los arcos correspondientes 
 	    grafoInput = new DiGraphMatrix(numNodos);
 	    linea = in.readLine();
 	    int numLineas = Integer.parseInt(linea);
 	    String[] partes;
+
 	    for (int i=0; i<numLineas; i++) {
-		linea = in.readLine();
+		linea = in.readLine(); 	
 		partes = linea.split(" ");
+		
 		int nodoDestino = busqueda(partes[0],nombresNodos);
 		int numArcos = Integer.parseInt(partes[1]);
+
 		for (int j=0; j<numArcos; j++) {
 		    int nodoOrigen = busqueda(partes[j+2],nombresNodos);
 		    Arc arco = grafoInput.addArc(nodoOrigen,nodoDestino);
@@ -129,12 +117,13 @@ public class Main {
 
 	DiGraph grafoAlcance = grafoInput.royWarshall();
 	DiGraph grafoReducido = (DiGraph)grafoAlcance.clone();
-	//List<Integer> predInmediatos[] = new List[numNodos];
+	
+	// Calcular grafo excluyendo arcos de transitividad 
 	for (int i=0; i<numNodos; i++) {
 	    Arc borrado = grafoAlcance.delArc(i,i);
 	    borrado = grafoReducido.delArc(i,i);
 	    List<Integer> predecesores = grafoAlcance.getPredecesors(i);
-	    //List<Integer> inmediatos = predecesores.clone();
+	   
 	    for (int j=0; j<predecesores.size(); j++) {
 		int nodoOrigen = predecesores.get(j).intValue();
 		boolean listo = false;
@@ -145,18 +134,17 @@ public class Main {
 		    }
 		    if (grafoAlcance.isArc(nodoOrigen,nodoDestino)) {
 			Arc arco = grafoReducido.delArc(nodoOrigen,i);
-			//Integer elem = inmediatos.remove(nodoOrigen);
 			listo = true;
 		    }
 		}
 	    }
-	    // predInmediatos[i] = inmediatos;
 	}
 
 	
-	//imprimirGrafo o Lista()
+	// Imprimir Grafo 
 	try {
 	    PrintStream out = new PrintStream(args[1]);
+
 	    for (int i=0; i<numNodos; i++) {
 		String salida = nombresNodos[i]+" ";
 		List<Integer> pred = grafoReducido.getPredecesors(i);
@@ -164,11 +152,9 @@ public class Main {
 		for (int j=0; j<pred.size(); j++) {
 		    salida += " "+nombresNodos[pred.get(j).intValue()];
 		}
-		/*if (i!=numNodos-1) {
-		    salida += "\n";
-		}*/
 		out.print(salida+"\n");
 	    }
+
 	} catch (IOException ioe) {
 	    System.err.println("No se puede escribir el archivo");
 	}
