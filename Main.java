@@ -10,7 +10,7 @@ import java.lang.Integer;
  * Programa que recibe como entrada un archivo (.input) con
  * un conjunto de nombres de cursos junto con sus
  * prerequisitos.
- * Computa el conjunto minimo de prerequisitos para cada
+ * Computa los prerequisitos inmediatos  para cada
  * curso y las escribe en el archivo de salida. 
  * Sintaxis: java Main <archivo.input> <archivo.output>
  *
@@ -19,8 +19,8 @@ import java.lang.Integer;
  * @since 1.6
 **/
 
-public class Main {
-    
+public class 
+
     private static int busqueda(String s, String[] a){
 	int ini = 0;
 	int fin = a.length-1;
@@ -145,6 +145,8 @@ public class Main {
 	try {
 	    PrintStream out = new PrintStream(args[1]);
 
+	    //No ordenamos los predecesores porque DiGraphMatrix
+	    //ya devuelve los devuelve en el orden que se necesita
 	    for (int i=0; i<numNodos; i++) {
 		String salida = nombresNodos[i]+" ";
 		List<Integer> pred = grafoReducido.getPredecesors(i);
